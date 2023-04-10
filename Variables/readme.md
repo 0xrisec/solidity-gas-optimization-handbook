@@ -94,7 +94,7 @@ contract Example {
     function incrementCounter(uint amount) public {
         for (uint i = 0; i < amount; i++) {
             // Accesses the state variable 'counter' and increments its value.
-            counter++; // State variable reads and writes multiple times
+            counter++; //❌ State variable reads and writes multiple times
         }
     }
 
@@ -105,7 +105,7 @@ contract Example {
             _counter++; // Local variable reads and writes
         }
         // Assigns the updated value back to the state variable 'counter'.
-        counter = _counter; // Writes to the state variable 'counter' once.
+        counter = _counter; //✔️ Writes to the state variable 'counter' once.
     }
 }
 ```
