@@ -80,3 +80,39 @@ contract Example {
 | ❌ | `sum3()` | 3069 |
 | ❌ | `sum4()` | 3113 |
 
+## Substituting State Variables with Local Variables
+
+The recommendation is to substitute state variable reads and writes within loops with local variable reads and writes. This is because local variable operations are inexpensive while accessing state variables that are kept in the contract storage can be expensive.
+
+```
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity ^0.8.19;
+
+contract Example {
+    uint public counter;
+  
+    function incrementCounter(uint amount) public {
+        for (uint i = 0; i < amount; i++) {
+            // Accesses the state variable 'counter' and increments its value.
+            counter++; // State variable reads and writes multiple times
+        }
+    }
+
+    function incrementCounter2(uint amount) public {
+        uint _counter = counter; // Reads the state variable 'counter' once and stores it in a local variable.
+        for (uint i = 0; i < amount; i++) {
+            // Accesses the local variable and increments its value.
+            _counter++; // Local variable reads and writes
+        }
+        // Assigns the updated value back to the state variable 'counter'.
+        counter = _counter; // Writes to the state variable 'counter' once.
+    }
+}
+```
+
+In the provided code snippet, we have an example where the state variable `counter` is being incremented within a loop in the `incrementCounter` function. To improve the gas efficiency of this function, we can modify it to use a local variable instead. This can be done by copying the value of `counter` to a local variable before entering the loop then incrementing the local variable within the loop and finally assigning the updated value back to the state variable after the loop completes. This modified code is provided in the `incrementCounter2` function.
+
+|  | Function | Execution Gas Cost |
+| --- | --- | --- |
+| ❌ | `incrementCounter()` | 75638 |
+| ✔️ | `incrementCounter2()` | 36987 |
