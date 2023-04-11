@@ -116,3 +116,35 @@ In the provided code snippet, we have an example where the state variable `count
 | --- | --- | --- |
 | ❌ | `incrementCounter()` | 75638 |
 | ✔️ | `incrementCounter2()` | 36987 |
+
+
+## Single Line Swap
+
+Solidity provides a relatively unique capability to swap variable values within a single statement, making the use of a `temporary variable/xor/arithmetic` methods unnecessary for swapping. Using the `swap` feature can result in lower execution gas costs compared to using a `temporary variable/xor/arithmetic` methods.
+
+```
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity ^0.8.19;
+
+contract Example {
+    // Function to swap two uint variables using a temporary variable
+    function swap(uint _a, uint _b) external pure returns(uint a,uint b){
+        uint temp = _b;
+        _b = _a;
+        _a = temp;
+        return (_a,_b);
+    }
+
+    // Function to swap two uint variables in a single line using Solidity's swap feature
+    function singleLineSwap(uint _a, uint _b) external pure returns(uint a,uint b){
+        (_a, _b) = (_b, _a);
+        return (_a, _b);
+    }
+}
+```
+
+
+|  | Function | Execution Gas Cost |
+| --- | --- | --- |
+| ❌ | `swap()` | 918 |
+| ✔️ | `singleLineSwap()` | 893 |
