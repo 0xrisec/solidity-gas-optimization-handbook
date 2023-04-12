@@ -195,22 +195,22 @@ contract Example {
 pragma solidity ^0.8.19;
 
 contract Example {
-    // This function multiplies the input value by a given value using the shorthand notation.
+    // ❌ This function multiplies the input value by a given value using the shorthand notation.
     function multiplyBy(uint num, uint n) external pure{
         num *= n;
     }
 
-    // This function multiplies the input value by a given value using the multiplication operator.
+    // ✔️ This function multiplies the input value by a given value using the multiplication operator.
     function multiply(uint num, uint n) external pure{
         num = num * n;
     }
 
-    // This function divides the input value by a given value using the shorthand notation.
+    // ❌ This function divides the input value by a given value using the shorthand notation.
     function divideBy(uint num, uint n) external pure{
         num /= n;
     }
 
-    // This function divides the input value by a given value using the divide operator.
+    // ✔️ This function divides the input value by a given value using the divide operator.
     function divide(uint num, uint n) external pure{
         num = num / n;
     }
