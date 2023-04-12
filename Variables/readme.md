@@ -120,7 +120,7 @@ In the provided code snippet, we have an example where the state variable `count
 
 ## Single Line Swap
 
-Solidity provides a relatively unique capability to swap variable values within a single statement, making the use of a `temporary variable/xor/arithmetic` methods unnecessary for swapping. Using the `swap` feature can result in lower execution gas costs compared to using a `temporary variable/xor/arithmetic` methods.
+Solidity provides a relatively unique capability to swap variable values within a single statement, making the use of a `temporary variable/xor/arithmetic` methods unnecessary for swapping. Using the `swap` feature can result in lower execution gas costs compared to using a `temporary variable/xor/arithmetic` method.
 
 ```
 // SPDX-License-Identifier: GPL-3.0
@@ -148,3 +148,85 @@ contract Example {
 | --- | --- | --- |
 | ❌ | `swap()` | 918 |
 | ✔️ | `singleLineSwap()` | 893 |
+
+## Optimizing Arithmetic Operations
+
+**1. Use Better Increment**
+
+There are several ways to perform increment and decrement operations in Solidity, including shorthand notation, addition operator, post-increment operator, and pre-increment operator. Here is an example of each technique:
+
+```
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity ^0.8.19;
+
+contract Example {
+    // ❌ This function increments the input value using the shorthand notation.
+    function increment(uint num) external pure{
+        num += 1;
+    }
+
+    // ❌ This function increments the input value using the addition operator.
+    function increment2(uint num) external pure{
+        num = num + 1;
+    }
+
+    // ❌ This function increments the input value using the post-increment operator.
+    function increment3(uint num) external pure{
+        num++;
+    }
+
+    // ✔️ This function increments the input value using the pre-increment operator.
+    function increment4(uint num) external pure{
+        ++num;
+    }
+}
+```
+
+|  | Function | Execution Gas Cost |
+| --- | --- | --- |
+| ❌ | `increment()` | 602 |
+| ❌ | `increment2()` | 580 |
+| ❌ | `increment3()` | 589 |
+| ✔️ | `increment4()` | 562 |
+
+**2. Do not use the shorthand notation**
+```
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity ^0.8.19;
+
+contract Example {
+    // This function multiplies the input value by a given value using the shorthand notation.
+    function multiplyBy(uint num, uint n) external pure{
+        num *= n;
+    }
+
+    // This function multiplies the input value by a given value using the multiplication operator.
+    function multiply(uint num, uint n) external pure{
+        num = num * n;
+    }
+
+    // This function divides the input value by a given value using the shorthand notation.
+    function divideBy(uint num, uint n) external pure{
+        num /= n;
+    }
+
+    // This function divides the input value by a given value using the divide operator.
+    function divide(uint num, uint n) external pure{
+        num = num / n;
+    }
+}
+```
+
+|  | Function | Execution Gas Cost |
+| --- | --- | --- |
+| ❌ | `multiplyBy()` | 839 |
+| ✔️ | `multiply()` | 817 |
+| ❌ | `divideBy()` | 768 |
+| ✔️ | `divide()` | 746 |
+
+
+Based on test results, we recommend the following techniques for optimizing gas consumption:
+
+- Use pre-increment and pre-decrement operators (i.e., `++i` and `--i`) instead of post-increment and post-decrement operators (i.e., `i++` and `i--`) where possible. Pre-increment and pre-decrement operators are more efficient and cheaper, resulting in lower gas consumption. However, note that post-increment and post-decrement operators return the old value before incrementing or decrementing while pre-increment and pre-decrement operators return the new value.
+
+- Use `i = i + n` instead of shorthand notation (i.e., `i += n`) for **addition**, **subtraction**, **multiplication**, and **division** operations. This technique results in lower gas consumption and is more efficient, especially for large values of `n`.
