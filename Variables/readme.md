@@ -230,3 +230,41 @@ Based on test results, we recommend the following techniques for optimizing gas 
 - Use pre-increment and pre-decrement operators (i.e., `++i` and `--i`) instead of post-increment and post-decrement operators (i.e., `i++` and `i--`) where possible. Pre-increment and pre-decrement operators are more efficient and cheaper, resulting in lower gas consumption. However, note that post-increment and post-decrement operators return the old value before incrementing or decrementing while pre-increment and pre-decrement operators return the new value.
 
 - Use `i = i + n` instead of shorthand notation (i.e., `i += n`) for **addition**, **subtraction**, **multiplication**, and **division** operations. This technique results in lower gas consumption and is more efficient, especially for large values of `n`.
+
+## Variable packing
+
+ Contracts use `32-byte` (`256-bit`) slots for storage and when we arrange multiple variables to fit within a single slot, it is known as variable packing. This technique can be compared to the game of Tetris where we aim to fit various shapes together to minimize wasted space and optimize our gas usage.
+
+ If a variable is too large to fit within the `32-byte` limit of a slot, it will be stored in a new slot. Therefore, we must carefully choose which variables to pack together to reduce the number of required slots and ultimately save gas.
+
+ For example, consider the following variables:
+
+
+ ```
+contract Example1 {
+    uint128 a;
+    uint256 b;
+    uint128 c;
+}
+ ```
+
+If we were to pack `b` with `a`, it would exceed the `32-byte` limit and thus be stored in a new slot. The same would happen with `c` and `b`.
+
+However, if we reorder the variables like this:
+
+```
+contract Example2 {
+    uint128 a;
+    uint128 c;
+    uint256 b;
+}
+```
+
+We can pack `a` and `c` into the same slot since their combined size does not exceed the limit.
+
+|       | Contract  | Gas Cost |
+|-------|----------|--------------------|
+| ❌     | Example1 | 67,066 gas         |
+| ✔️     | Example2 | 67,054 gas         |
+
+When choosing data types, it is essential to consider whether a smaller version of a data type can help pack the variable into a storage slot. If a `uint128` variable does not pack, it is more efficient to use a `uint256` instead.
