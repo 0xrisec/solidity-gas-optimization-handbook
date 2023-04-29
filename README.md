@@ -8,8 +8,6 @@ A collection of Solidity code snippets and techniques for **optimizing gas**. Fe
 
 ## Suggestions
 
-<hr>
-
 ### Do Accurate Gas Cost Comparison
 
 `To accurately compare gas costs between functions, it is recommended that you do not include them in the same contract.`
