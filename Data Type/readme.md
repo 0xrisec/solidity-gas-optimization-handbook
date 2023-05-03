@@ -86,7 +86,7 @@ https://eips.ethereum.org/EIPS/eip-2200
 
 There are several integer types available, ranging from `uint8` to `uint256` . While it may seem that using a smaller integer type, such as `uint8`, would result in lower gas consumption, this is not actually the case.
 
-In fact, it is often better to use `uint256` instead of smaller integer types, even if the range of values required can be held in a smaller type. 
+In fact, it is often better to use `uint256` instead of smaller integer types, even if the range of values required can be held in a smaller type.
 
 **Demo Code:**
 
@@ -131,6 +131,7 @@ contract Example2 {
 
 <details>
 <summary><b>Reason</b></summary>
+
 Using `uint256` would be more gas-efficient than `uint8` because the `uint8` value would need to be padded with `24` zeros to fit into a `256-bit` word.
 
 This is how the layout of state variables in storage is designed in `EVM`, with each variable allocated to a `256-bit` word regardless of its actual size. Therefore, if you have a state variable that is smaller than `256 bits`, it will still occupy a full `256-bit` word and incur additional gas costs due to padding.

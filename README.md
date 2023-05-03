@@ -35,3 +35,7 @@ contract Example {
   }
 }
 ```
+
+### Consider both deployment cost and function execution cost 
+
+When designing a smart contract, it is important to consider both the deployment cost and the function execution cost. While a contract with a higher deployment cost may require more gas to be deployed, if it has a lower function execution cost, it may be more cost-effective for users who will be paying for each function execution. Conversely, a contract with a lower deployment cost may seem cheaper at first, but if it has a higher function execution cost, it may end up being more expensive for users in the long run. Therefore, it is important to consider both factors when designing a smart contract.
