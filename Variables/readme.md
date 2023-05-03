@@ -203,12 +203,17 @@ Based on test results, we recommend the following techniques for optimizing gas 
 
  For example, consider the following variables:
 
-
  ```
 contract Example1 {
-    uint128 a;
-    uint256 b;
-    uint128 c;
+    uint128 public a;
+    uint256 public b;
+    uint128 public c;
+
+    function update(uint128 _a, uint256 _b, uint128 _c) public {
+        a = _a;
+        b = _b;
+        c = _c;
+    }
 }
  ```
 
@@ -221,14 +226,27 @@ contract Example2 {
     uint128 a;
     uint128 c;
     uint256 b;
+
+    function update(uint128 _a, uint256 _b, uint128 _c) public {
+        a = _a;
+        b = _b;
+        c = _c;
+    }
 }
 ```
 
-We can pack `a` and `c` into the same slot since their combined size does not exceed the limit.
+We can pack `a` and `c` into the same slot since their combined size does not exceed the limit. This results in a gas cost reduction for updating the state variables of the contract.
 
-|       | Contract  | Gas Cost |
-|-------|----------|--------------------|
-| ❌     | Example1 | 67,066 gas         |
-| ✔️     | Example2 | 67,054 gas         |
+For instance, in the table below, we compare the gas cost of deploying and executing the update function for both `Example1` and `Example2` contracts:
 
-When choosing data types, it is essential to consider whether a smaller version of a data type can help pack the variable into a storage slot. If a `uint128` variable does not pack, it is more efficient to use a `uint256` instead.
+|  | Contract | Deployment |  | Function Execution |  |
+| --- | --- | --- | --- | --- | --- |
+|  | | Transaction Cost | Execution Cost | Transaction Cost | Execution Cost |
+| ❌ | Example1 | 214664  | 149796  | 88715  | 67231  |
+| ✔️ | Example2 | 214664 | 149796  | 66865 | 45381 |
+
+The deployment cost remains the same for both contracts, but the function execution cost is significantly lower in `Example2` due to variable packing.
+
+**Recommendations:**
+
+- When choosing data types, it is essential to consider whether a smaller version of a data type can help pack the variable into a storage slot. If a `uint128` variable does not pack, it is more efficient to use a `uint256` instead.
