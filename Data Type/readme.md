@@ -82,7 +82,7 @@ https://eips.ethereum.org/EIPS/eip-2200
    
 2. If you are not the first user, `Example3` is preferable. While the deployment gas cost is more expensive than `Example2`, the function execution gas cost is cheaper. Therefore, it is best suited if you want to minimize gas costs for the first user, which can lead to a better user experience. However, it's worth noting that sometimes the default value may need to be something other than zero.
 
-## uint256 vs uint8
+## uint8 vs uint256
 
 There are several integer types available, ranging from `uint8` to `uint256` . While it may seem that using a smaller integer type, such as `uint8`, would result in lower gas consumption, this is not actually the case.
 
@@ -182,8 +182,56 @@ You can find more detailed information about the layout of state variables in st
   </details>
   
 - For variables with an unlimited range of values, `uint256` are recommended. Using a smaller data type than required can lead to errors and security vulnerabilities, such as integer overflow or truncation. Therefore, it's important to choose an appropriate data type based on the expected range of values to avoid potential issues.
-  
-- Using smaller data types like `uint8` or `uint16` can be more gas-efficient than `uint256` when you need to store multiple variables in a data structure such as an `array` or a `struct`.        <details><summary><b>Example</b></summary>
+
+- It is advisable to use arrays of `uint8[]`, `uint16[]`, up to `uint128[]` data types as they require less gas than using an array of `uint256[]`. Conversely, using arrays of `uint136[]`, `uint144[]`, up to `uint248[]` will consume more gas compared to using an array of `uint256[]`.
+
+  <details><summary><b>Example</b></summary>
+
+  To demonstrate this, we can create two contracts, `Example` and `Example2`, both with a public array for storing ages. `Example` contract uses a `uint8[]` data type, while `Example2` contract uses a `uint[]` data type.
+    ```
+    // SPDX-License-Identifier: GPL-3.0
+    pragma solidity ^0.8.19;
+
+    contract Example {
+        uint8[] public ages;
+        
+        function addAge(uint8 age) public {
+            ages.push(age);
+        }
+    }
+
+    contract Example2 {
+        uint[] public ages;
+        
+        function addAge(uint age) public {
+            ages.push(age);
+        }
+    }
+    ```
+    When deploying both contracts, we can observe that `Example` contract consumes more gas compared to `Example2`. 
+
+    | Contract Name | Variable Type| Transaction Cost | Execution Cost |
+    | --- | --- | ---| --- | --- |
+    | Example | `uint8[]` | 174295  | 112359 |
+    | Example2 | `uint[]` | 142705 | 83129 |
+    
+    This difference in gas consumption can also be observed when executing functions that push elements into the arrays.
+    
+    | Contract Name | Variable Type | Transaction Cost | Execution Cost |
+    | --- |--- | --- | --- | --- |
+    | Example| `uint8[]` | 66001  | 44797 |
+    | Example2| `uint[]` | 65911 | 44707 |
+
+    However, after the first user, the gas consumption for `Example` contract becomes lower compared to `Example2` around we saves `38%` gas 😱.
+
+    || Contract Name| Variable Type | Transaction Cost | Execution Cost |
+    | --- | --- |---| --- | --- |
+    | ✔️ | Example | `uint8[]`| 31851  | 10647 |
+    | ❌ | Example2 | `uint[]`| 48811 | 27607 |
+
+   </details>
+
+- Using smaller data types like `uint8` or `uint16` can be more gas-efficient than `uint256` when you need to store multiple variables in a data structure such as an `array`,`mapping` and a `struct`.        <details><summary><b>Example</b></summary>
     ```
     contract Example {
         // Define a struct to store RGB values
