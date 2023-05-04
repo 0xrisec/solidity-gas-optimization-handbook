@@ -90,7 +90,8 @@ In fact, it is often better to use `uint256` instead of smaller integer types, e
 
 **Demo Code:**
 
-```// SPDX-License-Identifier: GPL-3.0
+```
+// SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.19;
 
 contract Example1 {
@@ -208,17 +209,18 @@ You can find more detailed information about the layout of state variables in st
         }
     }
     ```
+    
     When deploying both contracts, we can observe that `Example1` contract consumes more gas compared to `Example2`. 
 
     | Contract Name | Variable Type| Transaction Cost | Execution Cost |
-    | --- | --- | ---| --- | --- |
+    | --- | --- | ---| --- | 
     | Example1 | `uint8[]` | 174295  | 112359 |
     | Example2 | `uint[]` | 142705 | 83129 |
     
     This difference in gas consumption can also be observed when executing functions that push elements into the arrays.
     
     | Contract Name | Variable Type | Transaction Cost | Execution Cost |
-    | --- |--- | --- | --- | --- |
+    | --- |--- | --- | --- |
     | Example1 | `uint8[]` | 66001  | 44797 |
     | Example2 | `uint[]` | 65911 | 44707 |
 
