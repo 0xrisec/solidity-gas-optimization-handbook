@@ -11,7 +11,7 @@ It is more expensive to store nonzero values on `zero` values. Initializing `uin
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.19;
 
-contract Example {
+contract Example1 {
     // ❌ : unnecessary initialization of variable with default value
     uint num = 0;
 
@@ -39,7 +39,7 @@ contract Example3 {
 }
 ```
 
-In the provided example, `Example2` is a more efficient implementation than `Example` because the variable `num` is automatically initialized with the default value of `0`, while in `Example`, `num` is unnecessarily initialized with the value `0`. 
+In the provided example, `Example2` is a more efficient implementation than `Example1` because the variable `num` is automatically initialized with the default value of `0`, while in `Example1`, `num` is unnecessarily initialized with the value `0`. 
 
 However, `Example3` is even more efficient than `Example2` because num is initialized with the value `1`, which reduces the gas cost of `SSTORE` operations.
 
@@ -48,7 +48,7 @@ The gas costs for deploying and executing each contract are provided in the tabl
 |  | Contract | Variable | Initialization | Deployment |  | Function Execution |  |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 |  ||   |  | Transaction Cost | Execution Cost | Transaction Cost | Execution Cost |
-| ❌ | Example | num | 0 | 109757 | 52705 | 43437 | 22373 |
+| ❌ | Example1 | num | 0 | 109757 | 52705 | 43437 | 22373 |
 | ✔️ | Example2 | num | Default value (0) | 107499 | 50499 | 43437 | 22373 |
 | ✔️ | Example3 | num | 1 | 129673 | 72605 | 26337 | 5273 |
 
@@ -93,7 +93,7 @@ In fact, it is often better to use `uint256` instead of smaller integer types, e
 ```// SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.19;
 
-contract Example {
+contract Example1 {
     uint8 num;
 
     function incrementCounter() external returns (uint8) {
@@ -125,7 +125,7 @@ contract Example2 {
 |  | Contract | Variable  | Deployment |  | Function Execution |  |
 | --- | --- | --- | --- | --- | --- | --- |
 |  |  |  | Transaction Cost | Execution Cost | Transaction Cost | Execution Cost |
-| ❌ | Example | `uint8` num | 153469  | 93341  | 63991  | 42927  |
+| ❌ | Example1 | `uint8` num | 153469  | 93341  | 63991  | 42927  |
 | ✔️ | Example2 | `uint256` num | 145891 | 86335  | 62251 | 41187 |
 
 
@@ -187,12 +187,12 @@ You can find more detailed information about the layout of state variables in st
 
   <details><summary><b>Example</b></summary>
 
-  To demonstrate this, we can create two contracts, `Example` and `Example2`, both with a public array for storing ages. `Example` contract uses a `uint8[]` data type, while `Example2` contract uses a `uint[]` data type.
+  To demonstrate this, we can create two contracts, `Example1` and `Example2`, both with a public array for storing ages. `Example1` contract uses a `uint8[]` data type, while `Example2` contract uses a `uint[]` data type.
     ```
     // SPDX-License-Identifier: GPL-3.0
     pragma solidity ^0.8.19;
 
-    contract Example {
+    contract Example1 {
         uint8[] public ages;
         
         function addAge(uint8 age) public {
@@ -208,32 +208,32 @@ You can find more detailed information about the layout of state variables in st
         }
     }
     ```
-    When deploying both contracts, we can observe that `Example` contract consumes more gas compared to `Example2`. 
+    When deploying both contracts, we can observe that `Example1` contract consumes more gas compared to `Example2`. 
 
     | Contract Name | Variable Type| Transaction Cost | Execution Cost |
     | --- | --- | ---| --- | --- |
-    | Example | `uint8[]` | 174295  | 112359 |
+    | Example1 | `uint8[]` | 174295  | 112359 |
     | Example2 | `uint[]` | 142705 | 83129 |
     
     This difference in gas consumption can also be observed when executing functions that push elements into the arrays.
     
     | Contract Name | Variable Type | Transaction Cost | Execution Cost |
     | --- |--- | --- | --- | --- |
-    | Example| `uint8[]` | 66001  | 44797 |
-    | Example2| `uint[]` | 65911 | 44707 |
+    | Example1 | `uint8[]` | 66001  | 44797 |
+    | Example2 | `uint[]` | 65911 | 44707 |
 
-    However, after the first user, the gas consumption for `Example` contract becomes lower compared to `Example2` around we saves `38%` gas 😱.
+    However, after the first user, the gas consumption for `Example1` contract becomes lower compared to `Example2` around we saves `38%` gas 😱.
 
     || Contract Name| Variable Type | Transaction Cost | Execution Cost |
     | --- | --- |---| --- | --- |
-    | ✔️ | Example | `uint8[]`| 31851  | 10647 |
+    | ✔️ | Example1 | `uint8[]`| 31851  | 10647 |
     | ❌ | Example2 | `uint[]`| 48811 | 27607 |
 
    </details>
 
 - Using smaller data types like `uint8` or `uint16` can be more gas-efficient than `uint256` when you need to store multiple variables in a data structure such as an `array`,`mapping` and a `struct`.        <details><summary><b>Example</b></summary>
     ```
-    contract Example {
+    contract Example1 {
         // Define a struct to store RGB values
         struct Pixel {
             uint8 red;
@@ -250,7 +250,6 @@ You can find more detailed information about the layout of state variables in st
             pixels.push(newPixel);
         }
     }
-
 
     contract Example2 {
         // Define a struct to store RGB values
@@ -274,10 +273,10 @@ You can find more detailed information about the layout of state variables in st
     |  | Contract | Variable  | Deployment |  | Function Execution |  |
     | --- | --- | --- | --- | --- | --- | --- |
     |  |  |  | Transaction Cost | Execution Cost | Transaction Cost | Execution Cost |
-    | ✔️ | Example | `uint8` | 222530  | 157202  | 67407  | 45923  |
+    | ✔️ | Example1 | `uint8` | 222530  | 157202  | 67407  | 45923  |
     | ❌ | Example2 | `uint256` | 186835 | 123971  | 110899 | 89415 |
     
-    The following code defines two contracts, `Example` and `Example2`, which both store `RGB` values using a `struct` called `Pixel` and an array to store multiple pixels. However, `Example` uses `uint8` for the color values, while `Example2` uses `uint`. 
+    The following code defines two contracts, `Example1` and `Example2`, which both store `RGB` values using a `struct` called `Pixel` and an array to store multiple pixels. However, `Example1` uses `uint8` for the color values, while `Example2` uses `uint`. 
 
-    Based on the gas cost analysis, `Example` has a higher deployment cost but a lower function execution cost, while `Example2` has a lower deployment cost but a higher function execution cost. Since deployment cost is a one-time payment, while function execution cost is paid by each user, `Example` is more gas cost-efficient overall. Therefore, `Example` is the recommended contract to use.
+    Based on the gas cost analysis, `Example1` has a higher deployment cost but a lower function execution cost, while `Example2` has a lower deployment cost but a higher function execution cost. Since deployment cost is a one-time payment, while function execution cost is paid by each user, `Example1` is more gas cost-efficient overall. Therefore, `Example1` is the recommended contract to use.
     </details> 
